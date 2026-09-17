@@ -1,152 +1,80 @@
-# LLM From Scratch (Chapter-wise Learning Repo)
+# LLM From Scratch
 
-Repository to track and implement the book **"Build a Large Language Model (From Scratch)" by Sebastian Raschka** in a chapter-wise, reproducible, and presentable way.
+Chapter-wise implementations and notes based on *Build a Large Language Model (From Scratch)* by Sebastian Raschka.
 
-## Goals
+The repository is intentionally built in small, runnable steps. Every chapter must document its scope, keep implementation code under `src/`, and include an executable check for the behavior it teaches.
 
-- Learn and implement concepts chapter by chapter
-- Keep notes, code, and experiments organized per chapter
-- Maintain reproducible environments across multiple platforms
-
-## Suggested Repository Structure
+## Repository format
 
 ```text
 .
 ├── README.md
 ├── pyproject.toml
 ├── uv.lock
-├── chapters/
-│   ├── chapter_01/
-│   │   ├── notes.md
-│   │   ├── exercises/
-│   │   └── src/
-│   ├── chapter_02/
-│   │   ├── notes.md
-│   │   ├── exercises/
-│   │   └── src/
-│   └── ...
-├── datasets/
-├── notebooks/
-└── scripts/
+└── chapters/
+   └── chapter_02/
+      ├── README.md       # requirements and run commands
+      ├── notes.md        # concepts and implementation decisions
+      ├── src/             # importable chapter code
+      └── tests/           # chapter checks
 ```
 
-> Keep each chapter self-contained with notes, exercises, and source code.
+New chapters should follow the same layout. Keep datasets and generated artifacts out of source control unless a chapter explicitly needs them.
 
-## Environment Setup with `uv` (Reproducible Across Platforms)
+## Requirements
 
-### 1) Install `uv`
+- Python 3.11 or newer
+- `uv` for environment and dependency management
+- No network access or external dataset is required for Chapter 2
 
-- **Windows (PowerShell):**
+Install and verify the environment from the repository root:
+
+```powershell
+uv sync
+uv run python --version
+```
+
+## Current work
+
+Chapter 2 implements a deterministic word-and-punctuation tokenizer with vocabulary construction, special tokens, and reversible decoding. Its detailed requirements and acceptance checks are in [chapters/chapter_02/README.md](chapters/chapter_02/README.md).
+
+Run the Chapter 2 checks with:
+
+```powershell
+uv run python -m unittest discover -s chapters/chapter_02/tests -v
+```
+
+## Local Windows setup
+
+These instructions target a Windows laptop using PowerShell. Install `uv` once, then run the following commands from the repository root:
 
 ```powershell
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-```
-
-- **macOS/Linux (for SageMaker terminal as well):**
-
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-Verify installation:
-
-```bash
 uv --version
-```
-
-### 2) Initialize project metadata (first time only)
-
-From repository root:
-
-```bash
-uv init --name llm_from_scratch
-```
-
-If `pyproject.toml` already exists, skip this step.
-
-### 3) Create and sync the environment
-
-```bash
-uv venv
-uv sync
-```
-
-This creates `.venv` and installs dependencies from `pyproject.toml` / `uv.lock`.
-
-### 4) Add dependencies (example)
-
-```bash
-uv add numpy pandas matplotlib jupyter ipykernel
-```
-
-Commit both `pyproject.toml` and `uv.lock` for reproducibility.
-
----
-
-## Platform-specific Usage
-
-### Windows Laptop
-
-1. Open PowerShell in repository root.
-2. Run:
-
-```powershell
 uv venv
 uv sync
 .\.venv\Scripts\Activate.ps1
 ```
 
-3. Start notebooks if needed:
+This creates `.venv` and installs dependencies from `pyproject.toml` and `uv.lock`. Dependencies belong in `pyproject.toml`; update `uv.lock` whenever they change.
+
+Start notebooks only when a chapter requires them:
 
 ```powershell
 uv run jupyter notebook
 ```
 
-### SageMaker Notebooks
+## Chapter workflow
 
-1. Open a terminal in the notebook instance.
-2. In repo root:
-
-```bash
-uv venv
-uv sync
-source .venv/bin/activate
-uv run python -m ipykernel install --user --name llm-from-scratch
-```
-
-3. Select `llm-from-scratch` kernel in Jupyter.
-
-### Google Colab
-
-Colab does not persist local virtual environments between sessions, so use `uv` for fast, repeatable dependency sync at session start:
-
-```python
-!pip install -q uv
-!uv pip install -r <(uv export --format requirements-txt)
-```
-
-If `uv.lock`/`pyproject.toml` is updated, this keeps installs aligned with the repo state.
-
----
-
-## Chapter-wise Workflow
-
-For each chapter:
-
-1. Create chapter folder in `chapters/chapter_xx/`
-2. Add:
-   - `notes.md` for learning summary
-   - `src/` for implementation
-   - `exercises/` for practice
-3. Run chapter code with:
+For each chapter, add `README.md`, `notes.md`, `src/`, and `tests/`. The chapter README is the source of truth for requirements and commands. Run code from the repository root:
 
 ```bash
 uv run python chapters/chapter_xx/src/<script>.py
 ```
 
-## Reproducibility Checklist
+## Reproducibility checklist
 
-- Commit `pyproject.toml`
-- Commit `uv.lock`
-- Keep chapter folders organized and named consistently
-- Record chapter notes and key learnings in `notes.md`
+- Keep `pyproject.toml` and `uv.lock` in sync.
+- Keep chapter folders named `chapter_XX` and self-contained.
+- Make tests runnable without a notebook or hidden local files.
+- Record concepts and decisions in each chapter's `notes.md`.
